@@ -134,10 +134,9 @@
     <div id="hadith-container"></div>
 
     <script>
-        // استخراج اسم الملف ومعرف الحديث من رابط الصفحة
+        // استخراج اسم الملف من رابط الصفحة
         const urlParams = new URLSearchParams(window.location.search);
         const fileName = urlParams.get('file');
-        const hadithId = urlParams.get('id');
 
         // قائمة الكتب لمعرفة اسم الكتاب بناءً على اسم الملف
         const books = {
@@ -173,76 +172,59 @@
             const hadithContainer = document.getElementById('hadith-container');
             const hadiths = data.hadiths;
 
-            // عرض الحديث إذا تم تمرير معرف الحديث في الرابط
-            if (hadithId) {
-                const selectedHadith = hadiths.find(hadith => hadith.id === parseInt(hadithId));
-                if (selectedHadith) {
-                    const arabicText = `<p><strong>الحديث الشريف :</strong> ${selectedHadith.arabic}</p>`;
-                    
-                    const hadithDiv = document.createElement('div');
-                    hadithDiv.classList.add('hadith');
-                    hadithDiv.innerHTML = arabicText;
+            // خلط الأحاديث
+            const shuffledHadiths = shuffleArray(hadiths);
 
-                    // إضافة الحديث إلى الصفحة
-                    hadithContainer.appendChild(hadithDiv);
-                } else {
-                    hadithContainer.innerHTML = "<p>لم يتم العثور على الحديث المطلوب.</p>";
-                }
-            } else {
-                // خلط الأحاديث إذا لم يتم تمرير معرف الحديث
-                const shuffledHadiths = shuffleArray(hadiths);
+            // عرض الأحاديث
+            shuffledHadiths.forEach(hadith => {
+                const arabicText = `<p><strong>الحديث الشريف :</strong> ${hadith.arabic}</p>`;
+                const id = hadith.id; // الحصول على ID الحديث
 
-                // عرض الأحاديث
-                shuffledHadiths.forEach(hadith => {
-                    const arabicText = `<p><strong>الحديث الشريف :</strong> ${hadith.arabic}</p>`;
-                    const id = hadith.id; // الحصول على ID الحديث
+                const hadithDiv = document.createElement('div');
+                hadithDiv.classList.add('hadith');
+                hadithDiv.innerHTML = arabicText;
 
-                    const hadithDiv = document.createElement('div');
-                    hadithDiv.classList.add('hadith');
-                    hadithDiv.innerHTML = arabicText;
+                // إنشاء أزرار النسخ والمشاركة
+                const buttonsDiv = document.createElement('div');
+                buttonsDiv.classList.add('copy-share-buttons');
 
-                    // إنشاء أزرار النسخ// إنشاء أزرار النسخ والمشاركة
-                    const buttonsDiv = document.createElement('div');
-                    buttonsDiv.classList.add('copy-share-buttons');
-
-                    // زر النسخ
-                    const copyButton = document.createElement('button');
-                    copyButton.classList.add('button');
-                    copyButton.innerHTML = '<i class="fas fa-copy"></i> نسخ';
-                    copyButton.addEventListener('click', () => {
-                        const fullText = `حديث شريف من ${books[fileName]}: ${hadith.arabic}`; // نص الحديث فقط
-                        navigator.clipboard.writeText(fullText);
-                        alert('تم نسخ الحديث!');
-                    });
-
-                    // زر المشاركة
-                    const shareButton = document.createElement('button');
-                    shareButton.classList.add('button');
-                    shareButton.innerHTML = '<i class="fas fa-share-alt"></i> مشاركة';
-                    shareButton.addEventListener('click', () => {
-                        const shareUrl = `${window.location.origin}/book.html?file=${fileName}&id=${id}`;
-                        const fullText = `حديث شريف من ${books[fileName]}: ${hadith.arabic}\n\nلزيارة الرابط: ${shareUrl}`; // نص الحديث ورابطه
-                        
-                        if (navigator.share) {
-                            navigator.share({
-                                title: 'حديث شريف',
-                                text: fullText // النص الذي سيتم مشاركته
-                            }).then(() => {
-                                alert('تمت مشاركة الحديث بنجاح');
-                            }).catch(console.error);
-                        } else {
-                            alert('المشاركة غير مدعومة في متصفحك.');
-                        }
-                    });
-
-                    buttonsDiv.appendChild(copyButton);
-                    buttonsDiv.appendChild(shareButton);
-                    hadithDiv.appendChild(buttonsDiv);
-
-                    // إضافة الحديث إلى الصفحة
-                    hadithContainer.appendChild(hadithDiv);
+                //// زر النسخ
+                const copyButton = document.createElement('button');
+                copyButton.classList.add('button');
+                copyButton.innerHTML = '<i class="fas fa-copy"></i> نسخ';
+                copyButton.addEventListener('click', () => {
+                    const fullText = `حديث شريف من ${books[fileName]}: ${hadith.arabic}`; // نص الحديث فقط
+                    navigator.clipboard.writeText(fullText);
+                    alert('تم نسخ الحديث!');
                 });
-            }
+
+                // زر المشاركة
+                const shareButton = document.createElement('button');
+                shareButton.classList.add('button');
+                shareButton.innerHTML = '<i class="fas fa-share-alt"></i> مشاركة';
+                shareButton.addEventListener('click', () => {
+                    const shareUrl = `${window.location.origin}/book.html?file=${fileName}&id=${id}`;
+                    const fullText = `حديث شريف من ${books[fileName]}: ${hadith.arabic}\n\nلزيارة الرابط: ${shareUrl}`; // نص الحديث ورابطه
+                    
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'حديث شريف',
+                            text: fullText // النص الذي سيتم مشاركته
+                        }).then(() => {
+                            alert('تمت مشاركة الحديث بنجاح');
+                        }).catch(console.error);
+                    } else {
+                        alert('المشاركة غير مدعومة في متصفحك.');
+                    }
+                });
+
+                buttonsDiv.appendChild(copyButton);
+                buttonsDiv.appendChild(shareButton);
+                hadithDiv.appendChild(buttonsDiv);
+
+                // إضافة الحديث إلى الصفحة
+                hadithContainer.appendChild(hadithDiv);
+            });
         })
         .catch(error => console.error('Error:', error));
 
