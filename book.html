@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عرض الحديث</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="anonymous" referrerpolicy="no-referrer" />
     
     <style>
         body {
@@ -23,6 +23,11 @@
             margin: 20px 0;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .hadith:hover {
+            transform: scale(1.05);
+            background-color: #e0f7fa;
         }
         .h1h {
             text-align: center;
@@ -58,29 +63,80 @@
             justify-content: space-between;
             margin-bottom: 20px;
         }
-        #back-button {
-            margin-top: 20px;
-            text-align: center;
+        .copy-share-buttons {
+            margin-top: 10px;
+        }
+        .copy-share-buttons button {
+            margin-right: 10px;
+        }
+        #theme-toggle {
+            padding: 12px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #333;
+            border: 2px solid #00aaff;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+        #theme-toggle:hover {
+            background-color: #00aaff;
+            color: #ffffff;
+            box-shadow: 0 6px 12px rgba(0, 170, 255, 0.3);
         }
 
+        /* الوضع الليلي */
+        .dark-theme {
+            background-color: #333;
+            color: #f4f4f4;
+        }
+        .dark-theme .hadith {
+            background-color: #444;
+        }
+        .dark-theme .button {
+            background-color: #C59C25;
+        }
+        .dark-theme .button:hover {
+            background-color: #8E7621;
+        }
+        .dark-theme #theme-toggle {
+            background-color: #444;
+            color: #fff;
+            border: 2px solid #C59C25;
+        }
+        .dark-theme #theme-toggle:hover {
+            background-color: #C59C25;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            a {
+                font-size: 1.2em;
+                width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <h1 class="h1h">عرض الحديث</h1>
+    <!-- أزرار في أعلى الصفحة -->
+    <div class="top-buttons">
+        <button id="back-button" class="button"><i class="fas fa-arrow-left"></i> رجوع</button>
+        <button id="theme-toggle" title="تغيير الوضع"><i class="fas fa-adjust"></i></button>
+    </div>
+
+    <h1 class="h1h">عرض الأحاديث من الكتاب</h1>
     <div id="book-name" class="book-name"></div> <!-- لعرض اسم الكتاب -->
     <div id="hadith-container"></div>
 
-    <!-- زر الرجوع إلى الصفحة الرئيسية -->
-    <div id="back-button">
-        <button class="button"><i class="fas fa-arrow-left"></i> رجوع إلى الصفحة الرئيسية</button>
-    </div>
-
     <script>
-        // استخراج اسم الملف وID الحديث من رابط الصفحة
+        // استخراج اسم الملف من رابط الصفحة
         const urlParams = new URLSearchParams(window.location.search);
         const fileName = urlParams.get('file');
-        const hadithId = parseInt(urlParams.get('id'));
+        const hadithId = urlParams.get('id'); // استخراج ID الحديث
 
         // قائمة الكتب لمعرفة اسم الكتاب بناءً على اسم الملف
         const books = {
@@ -91,13 +147,14 @@
             "bulugh_almaram.json": "بلوغ المرام",
             "aladab_almufrad.json": "الأدب المفرد",
             "shamail_muhammadiya.json": "الشمائل المحمدية",
-            "mishkat_almasabih.json": "مشكاة المصابيح"
+            "mishkat_almasabih.json": "مشكاة المصابيح",
+            "abudawud.json": "أبو داود" // مثال على إضافة كتاب جديد
         };
 
         // عرض اسم الكتاب بناءً على اسم الملف
         const bookNameElement = document.getElementById('book-name');
         if (books[fileName]) {
-            bookNameElement.textContent = `أحاديث من كتاب: ${books[fileName]}`;
+            bookNameElement.innerHTML = `أحاديث من كتاب: <a href="book.html?file=${fileName}">${books[fileName]}</a>`;
         }
 
         // قراءة ملف JSON بناءً على اسم الملف من الرابط
@@ -107,28 +164,72 @@
             const hadithContainer = document.getElementById('hadith-container');
             const hadiths = data.hadiths;
 
-            // البحث عن الحديث بناءً على ID
-            const hadith = hadiths.find(h => h.id === hadithId);
+            // العثور على الحديث بناءً على ID الحديث من الرابط
+            const selectedHadith = hadiths.find(h => h.id == hadithId);
 
-            if (hadith) {
-                // عرض الحديث
-                const arabicText = `<p><strong>الحديث الشريف :</strong> ${hadith.arabic}</p>`;
+            if (selectedHadith) {
+                const arabicText = `<p><strong>الحديث الشريف :</strong> ${selectedHadith.arabic}</p>`;
+                
                 const hadithDiv = document.createElement('div');
                 hadithDiv.classList.add('hadith');
                 hadithDiv.innerHTML = arabicText;
+
+                // إنشاء أزرار النسخ والمشاركة
+                const buttonsDiv = document.createElement('div');
+                buttonsDiv.classList.add('copy-share-buttons');
+
+                // زر النسخ
+                const copyButton = document.createElement('button');
+                copyButton.classList.add('button');
+                copyButton.innerHTML = '<i class="fas fa-copy"></i> نسخ';
+                copyButton.addEventListener('click', () => {
+                    const fullText = `حديث شريف من ${books[fileName]}: ${selectedHadith.arabic}`;
+                    navigator.clipboard.writeText(fullText);
+                    alert('تم نسخ الحديث!');
+                });
+
+                // زر المشاركة
+                const shareButton = document.createElement('button');
+                shareButton.classList.add('button');
+                shareButton.innerHTML = '<i class="fas fa-share-alt"></i> مشاركة';
+                shareButton.addEventListener('click', () => {
+                    const shareUrl = `${window.location.origin}/book.html?file=${fileName}&id=${selectedHadith.id}`;
+                    const fullText = `حديث شريف من ${books[fileName]}: ${selectedHadith.arabic}\n\nلزيارة الرابط: ${shareUrl}`;
+
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'حديث شريف',
+                            text: fullText
+                        }).then(() => {
+                            alert('تمت مشاركة الحديث بنجاح');
+                        }).catch(console.error);
+                    } else {
+                        alert('المشاركة غير مدعومة في متصفحك.');
+                    }
+                });
+
+                buttonsDiv.appendChild(copyButton);
+                buttonsDiv.appendChild(shareButton);
+                hadithDiv.appendChild(buttonsDiv);
+
+                // إضافة الحديث إلى الصفحة
                 hadithContainer.appendChild(hadithDiv);
             } else {
-                hadithContainer.textContent = "الحديث غير موجود.";
+                hadithContainer.innerHTML = '<p>لم يتم العثور على الحديث المطلوب.</p>';
             }
         })
         .catch(error => console.error('Error:', error));
 
         // زر الرجوع إلى الصفحة الرئيسية
         document.getElementById('back-button').addEventListener('click', () => {
-            window.location.href = "index.html";  // استبدل "index.html" بصفحة الرئيسية المناسبة
+            window.history.back();
         });
 
+        /// تغيير الوضع بين النهاري والليلي
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+        });
     </script>
-
 </body>
 </html>
