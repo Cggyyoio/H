@@ -71,7 +71,7 @@
             margin-right: 10px;
         }
         .navigation-buttons {
-            display: flex;
+            display: none; /* إخفاء الأزرار بشكل افتراضي */
             justify-content: space-between;
             margin-top: 20px;
         }
@@ -142,7 +142,7 @@
     <div id="hadith-container"></div>
 
     <!-- أزرار التنقل -->
-    <div class="navigation-buttons">
+    <div class="navigation-buttons" id="navigation-buttons">
         <button id="prev-button" class="button"><i class="fas fa-arrow-left"></i> السابق</button>
         <button id="next-button" class="button"><i class="fas fa-arrow-right"></i> التالي</button>
         <button id="home-button" class="button"><i class="fas fa-home"></i> الصفحة الرئيسية</button>
@@ -203,6 +203,10 @@
 
                     // إضافة الحديث إلى الصفحة
                     hadithContainer.appendChild(hadithDiv);
+
+                    // إظهار أزرار التنقل
+                    document.getElementById('navigation-buttons').style.display = 'flex';
+
                 } else {
                     hadithContainer.innerHTML = "<p>لم يتم العثور على الحديث المطلوب.</p>";
                 }
@@ -211,7 +215,7 @@
                 const shuffledHadiths = shuffleArray(hadiths);
 
                 // عرض الأحاديث
-                .forEach(hadith => {
+                shuffledHadiths.forEach(hadith => {
                     const arabicText = `<p><strong>الحديث الشريف :</strong> ${hadith.arabic}</p>`;
                     
                     const hadithDiv = document.createElement('div');
@@ -259,7 +263,7 @@
 
         // عند الضغط على زر قراءة الكتاب
         readBookButton.addEventListener('click', () => {
-            window.location.href = fileName; // الذهاب إلى الملف مباشرة
+            window.location.href = `?file=${fileName}`; // عرض جميع الأحاديث من الكتاب
         });
 
         // تغيير الثيم
@@ -267,6 +271,7 @@
         themeToggleButton.addEventListener('click', () => {
             document.body.classList.toggle('dark-theme');
         });
+
     </script>
 </body>
 </html>
