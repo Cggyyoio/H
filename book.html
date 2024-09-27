@@ -6,6 +6,7 @@
     <title>عرض الأحاديث</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM4HBGRmQq6X0eC3i7z5AOWF6m31OhF+G2jqZf" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <style>
         body {
@@ -200,7 +201,7 @@
                     hadithDiv.classList.add('hadith');
                     hadithDiv.innerHTML = arabicText;
 
-                    // إنشاء أزرار النسخ والمشاركة
+                    // إنشاء أزرار النسخ// إنشاء أزرار النسخ والمشاركة
                     const buttonsDiv = document.createElement('div');
                     buttonsDiv.classList.add('copy-share-buttons');
 
@@ -219,40 +220,43 @@
                     shareButton.classList.add('button');
                     shareButton.innerHTML = '<i class="fas fa-share-alt"></i> مشاركة';
                     shareButton.addEventListener('click', () => {
-                        const shareUrl = `${window.location.origin}/H/book.html?file=${fileName}&id=${id}`; // الرابط التلقائي
-                        const fullText = `حديث شريف من ${books[fileName]}: ${const fullText = `حديث شريف من ${books[fileName]}: ${hadith.arabic}\nرابط الحديث: ${shareUrl}`; // النص الكامل
-                        navigator.clipboard.writeText(fullText);
-                        alert('تم نسخ الرابط!');
+                        const shareUrl = `${window.location.origin}/book.html?file=${fileName}&id=${id}`;
+                        const fullText = `حديث شريف من ${books[fileName]}: ${hadith.arabic}\n\nلزيارة الرابط: ${shareUrl}`; // نص الحديث ورابطه
+                        
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'حديث شريف',
+                                text: fullText // النص الذي سيتم مشاركته
+                            }).then(() => {
+                                alert('تمت مشاركة الحديث بنجاح');
+                            }).catch(console.error);
+                        } else {
+                            alert('المشاركة غير مدعومة في متصفحك.');
+                        }
                     });
 
                     buttonsDiv.appendChild(copyButton);
                     buttonsDiv.appendChild(shareButton);
                     hadithDiv.appendChild(buttonsDiv);
+
+                    // إضافة الحديث إلى الصفحة
                     hadithContainer.appendChild(hadithDiv);
                 });
             }
         })
-        .catch(error => {
-            console.error('خطأ في تحميل البيانات:', error);
-            document.getElementById('hadith-container').innerHTML = "<p>حدث خطأ أثناء تحميل البيانات.</p>";
+        .catch(error => console.error('Error:', error));
+
+        // زر الرجوع إلى الصفحة الرئيسية
+        document.getElementById('back-button').addEventListener('click', () => {
+            window.history.back();
         });
 
-        // تغيير الثيم
+        // تغيير الوضع بين النهاري والليلي
         const themeToggle = document.getElementById('theme-toggle');
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-theme');
-            if (document.body.classList.contains('dark-theme')) {
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>'; // أيقونة الشمس
-            } else {
-                themeToggle.innerHTML = '<i class="fas fa-adjust"></i>'; // أيقونة القمر
-            }
-        });
-
-        // العودة إلى الصفحة السابقة
-        const backButton = document.getElementById('back-button');
-        backButton.addEventListener('click', () => {
-            window.history.back();
         });
     </script>
+
 </body>
 </html>
