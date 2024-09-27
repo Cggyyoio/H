@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عرض الأحاديث</title>
     
-    <!-- رابط مكتبة Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM4HBGRmQq6X0eC3i7z5AOWF6m31OhF+G2jqZf" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
@@ -130,7 +129,7 @@
         <button id="theme-toggle" title="تغيير الوضع"><i class="fas fa-adjust"></i></button>
     </div>
 
-    <h1 class="h1h">عرض الأحاديث من الكتاب</h1>
+    
     <div id="book-name" class="book-name"></div> <!-- لعرض اسم الكتاب -->
     <div id="hadith-container"></div>
 
@@ -179,6 +178,7 @@
             // عرض الأحاديث
             shuffledHadiths.forEach(hadith => {
                 const arabicText = `<p><strong>الحديث الشريف :</strong> ${hadith.arabic}</p>`;
+                const id = hadith.id; // الحصول على ID الحديث
 
                 const hadithDiv = document.createElement('div');
                 hadithDiv.classList.add('hadith');
@@ -187,13 +187,10 @@
                 // إنشاء أزرار النسخ والمشاركة
                 const buttonsDiv = document.createElement('div');
                 buttonsDiv.classList.add('copy-share-buttons');
-
                 // زر النسخ
-                const copyButton = document.createElement('button');
-                copyButton.classList.add('button');
-                copyButton.innerHTML = '<i class="fas fa-copy"></i> نسخ';
                 copyButton.addEventListener('click', () => {
-                    navigator.clipboard.writeText(hadith.arabic);
+                    const fullText = `حديث شريف من ${books[fileName]} (ID: ${id}): ${hadith.arabic}`;
+                    navigator.clipboard.writeText(fullText);
                     alert('تم نسخ الحديث!');
                 });
 
@@ -202,11 +199,14 @@
                 shareButton.classList.add('button');
                 shareButton.innerHTML = '<i class="fas fa-share-alt"></i> مشاركة';
                 shareButton.addEventListener('click', () => {
+                    const fullText = `حديث شريف من ${books[fileName]} (ID: ${id}): ${hadith.arabic}`;
+                    const shareUrl = `${window.location.origin}/book.html?file=${fileName}&id=${id}`;
+                    
                     if (navigator.share) {
                         navigator.share({
                             title: 'حديث شريف',
-                            text: hadith.arabic,
-                            url: window.location.href
+                            text: fullText,
+                            url: shareUrl
                         }).then(() => {
                             alert('تمت مشاركة الحديث بنجاح');
                         }).catch(console.error);
