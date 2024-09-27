@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عرض الأحاديث</title>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM4HBGRmQq6X0eC3i7z5AOWF6m31OhF+G2jqZf" crossorigin="anonymous">
     
     <style>
         body {
@@ -61,7 +61,6 @@
         .top-buttons {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 20px;
         }
         .copy-share-buttons {
@@ -173,11 +172,6 @@
             const hadithContainer = document.getElementById('hadith-container');
             const hadiths = data.hadiths;
 
-            if (!hadiths || !Array.isArray(hadiths)) {
-                hadithContainer.innerHTML = "<p>لا يوجد أحاديث لعرضها.</p>";
-                return;
-            }
-
             // عرض الحديث إذا تم تمرير معرف الحديث في الرابط
             if (hadithId) {
                 const selectedHadith = hadiths.find(hadith => hadith.id === parseInt(hadithId));
@@ -225,43 +219,40 @@
                     shareButton.classList.add('button');
                     shareButton.innerHTML = '<i class="fas fa-share-alt"></i> مشاركة';
                     shareButton.addEventListener('click', () => {
-                        const shareUrl = `${window.location.origin}/book.html?file=${fileName}&id=${id}`;
-                        const fullText = `حديث شريف من ${books[fileName]}: ${hadith.arabic}\n\nلزيارة الرابط: ${shareUrl}`; // نص الحديث ورابطه
-                        
-                        if (navigator.share) {
-                            navigator.share({
-                                title: 'حديث شريف',
-                                text: fullText // النص الذي سيتم مشاركته
-                            }).then(() => {
-                                alert('تمت مشاركة الحديث بنجاح');
-                            }).catch(console.error);
-                        } else {
-                            alert('المشاركة غير مدعومة في متصفحك.');
-                        }
+                        const shareUrl = `${window.location.origin}/H/book.html?file=${fileName}&id=${id}`; // الرابط التلقائي
+                        const fullText = `حديث شريف من ${books[fileName]}: ${const fullText = `حديث شريف من ${books[fileName]}: ${hadith.arabic}\nرابط الحديث: ${shareUrl}`; // النص الكامل
+                        navigator.clipboard.writeText(fullText);
+                        alert('تم نسخ الرابط!');
                     });
 
                     buttonsDiv.appendChild(copyButton);
                     buttonsDiv.appendChild(shareButton);
                     hadithDiv.appendChild(buttonsDiv);
-
-                    // إضافة الحديث إلى الصفحة
                     hadithContainer.appendChild(hadithDiv);
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
-
-        // زر الرجوع إلى الصفحة الرئيسية
-        document.getElementById('back-button').addEventListener('click', () => {
-            window.history.back();
+        .catch(error => {
+            console.error('خطأ في تحميل البيانات:', error);
+            document.getElementById('hadith-container').innerHTML = "<p>حدث خطأ أثناء تحميل البيانات.</p>";
         });
 
-        // تغيير الوضع بين النهاري والليلي
+        // تغيير الثيم
         const themeToggle = document.getElementById('theme-toggle');
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-theme');
+            if (document.body.classList.contains('dark-theme')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>'; // أيقونة الشمس
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-adjust"></i>'; // أيقونة القمر
+            }
+        });
+
+        // العودة إلى الصفحة السابقة
+        const backButton = document.getElementById('back-button');
+        backButton.addEventListener('click', () => {
+            window.history.back();
         });
     </script>
-
 </body>
 </html>
