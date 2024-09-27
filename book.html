@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عرض الأحاديث</title>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM4HBGRmQq6X0eC3i7z5AOWF6m31OhF+G2jqZf" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <style>
@@ -62,6 +61,7 @@
         .top-buttons {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
         .copy-share-buttons {
@@ -173,6 +173,11 @@
             const hadithContainer = document.getElementById('hadith-container');
             const hadiths = data.hadiths;
 
+            if (!hadiths || !Array.isArray(hadiths)) {
+                hadithContainer.innerHTML = "<p>لا يوجد أحاديث لعرضها.</p>";
+                return;
+            }
+
             // عرض الحديث إذا تم تمرير معرف الحديث في الرابط
             if (hadithId) {
                 const selectedHadith = hadiths.find(hadith => hadith.id === parseInt(hadithId));
@@ -201,7 +206,7 @@
                     hadithDiv.classList.add('hadith');
                     hadithDiv.innerHTML = arabicText;
 
-                    // إنشاء أزرار النسخ// إنشاء أزرار النسخ والمشاركة
+                    // إنشاء أزرار النسخ والمشاركة
                     const buttonsDiv = document.createElement('div');
                     buttonsDiv.classList.add('copy-share-buttons');
 
