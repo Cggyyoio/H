@@ -7,14 +7,12 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* نفس التنسيق الذي لديك */
         body {
             font-family: Arial, sans-serif;
             direction: rtl;
             padding: 20px;
             background-color: #ffffff;
             color: #333;
-            transition: background-color 0.3s, color 0.3s;
         }
         .hadith {
             background-color: #f0f4f7;
@@ -51,8 +49,8 @@
     <h1 class="h1h">عرض الأحاديث</h1>
     <div id="hadith-container"></div>
 
-    <!-- أزرار في أسفل الصفحة -->
-    <div class="bottom-buttons">
+    <!-- أزرار في أسفل الصفحة تظهر فقط عند وجود id -->
+    <div class="bottom-buttons" id="navigation-buttons" style="display: none;">
         <button id="prev-button" class="button"><i class="fas fa-arrow-left"></i> السابق</button>
         <button id="next-button" class="button">التالي <i class="fas fa-arrow-right"></i></button>
     </div>
@@ -74,28 +72,38 @@
         };
 
         const hadithContainer = document.getElementById('hadith-container');
+        const navigationButtons = document.getElementById('navigation-buttons');
 
         // قراءة ملف JSON بناءً على اسم الملف من الرابط
         fetch(fileName)
             .then(response => response.json())
             .then(data => {
                 const hadiths = data.hadiths;
-                const hadithIndex = hadiths.findIndex(hadith => hadith.id === hadithId);
-                if (hadithIndex !== -1) {
-                    displayHadith(hadiths[hadithIndex]);
-                    setupNavigationButtons(hadiths, hadithIndex);
+
+                if (hadithId) {
+                    // إذا كان هناك id في الرابط، عرض الحديث المحدد
+                    const hadithIndex = hadiths.findIndex(hadith => hadith.id === hadithId);
+                    if (hadithIndex !== -1) {
+                        displayHadith(hadiths[hadithIndex]);
+                        setupNavigationButtons(hadiths, hadithIndex);
+                        navigationButtons.style.display = "flex";  // عرض أزرار التنقل
+                    } else {
+                        hadithContainer.textContent = "الحديث غير موجود.";
+                    }
                 } else {
-                    hadithContainer.textContent = "الحديث غير موجود.";
+                    // إذا لم يكن هناك id، عرض كل الأحاديث
+                    hadiths.forEach(hadith => displayHadith(hadith));
                 }
             })
             .catch(error => console.error('Error:', error));
 
         function displayHadith(hadith) {
-            hadithContainer.innerHTML = `
-                <div class="hadith">
-                    <p><strong>الحديث الشريف :</strong> ${hadith.arabic}</p>
-                </div>
+            const hadithDiv = document.createElement('div');
+            hadithDiv.classList.add('hadith');
+            hadithDiv.innerHTML = `
+                <p><strong>الحديث الشريف :</strong> ${hadith.arabic}</p>
             `;
+            hadithContainer.appendChild(hadithDiv);
         }
 
         function setupNavigationButtons(hadiths, currentIndex) {
