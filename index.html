@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأربعينيات</title>
+    <style>
+        /* إعدادات الخطوط وأساسيات الصفحة */
+        body {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #11998e, #38ef7d);
+            background-size: cover;
+            background-attachment: fixed;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* تصميم الحاوية */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            text-align: center;
+        }
+
+        /* تصميم العنوان */
+        h1 {
+            font-size: 3em;
+            color: #fff;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* تصميم شبكة الأزرار */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* ثلاثة أزرار في كل صف */
+            gap: 20px;
+        }
+
+        /* تنسيق الأزرار */
+        a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-size: 1.5em;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
+            text-decoration: none;
+            border-radius: 50%; /* جعل الأزرار دائرية */
+            transition: all 0.3s ease;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            width: 150px;
+            height: 150px;
+            margin: auto; /* جعل الأزرار في المنتصف */
+        }
+
+        /* إضافة أيقونة خلفية للأزرار */
+        a::before {
+            content: "\f02d"; /* أيقونة كتاب من Font Awesome */
+            font-family: 'FontAwesome';
+            position: absolute;
+            font-size: 4em;
+            color: rgba(255, 255, 255, 0.1);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+
+        /* التأثيرات عند التمرير فوق الأزرار */
+        a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        a:hover::before {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* التنسيق المتجاوب */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .grid {
+                grid-template-columns: repeat(2, 1fr); /* صفين على الأجهزة الأصغر */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: repeat(1, 1fr); /* زر واحد في كل صف على الشاشات الصغيرة */
+            }
+            a {
+                width: 120px;
+                height: 120px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+
+    <!-- استدعاء الخطوط وFont Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>اختر كتابًا لعرض الأحاديث</h1>
+
+        <div class="grid">
+            <a href="book.html?file=nawawi40.json">الأربعون النووية</a>
+            <a href="book.html?file=qudsi40.json">الأحاديث القدسية</a>
+            <a href="book.html?file=malik.json">الإمام مالك</a>
+            <a href="book.html?file=riyad_assalihin.json">رياض الصالحين</a>
+            <a href="book.html?file=bulugh_almaram.json">بلوغ المرام</a>
+            <a href="book.html?file=aladab_almufrad.json">الأدب المفرد</a>
+            <a href="book.html?file=shamail_muhammadiya.json">الشمائل المحمدية</a>
+            <a href="book.html?file=mishkat_almasabih.json">مشكاة المصابيح</a>
+            <a href="book.html?file=muslim.json">الامام مسلم </a>
+             <a href="book.html?file=abudawud.json"> ابو داوود   </a>
+        </div>
+    </div>
+
+</body>
+</html>
